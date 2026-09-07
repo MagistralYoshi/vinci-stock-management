@@ -1,4 +1,4 @@
-# DEVELOPER CREDENTIALS - EXAMPLE TEMPLATE
+51# DEVELOPER CREDENTIALS - EXAMPLE TEMPLATE
 # Cette est un template. Générez vos propres identifiants en production!
 
 ## 🛠️ Developer Panel - Identifiants de Connexion
@@ -28,14 +28,14 @@ Le Developer Panel nécessite des identifiants sécurisés.
      { 
        id: 1, 
        username: 'admin', 
-       password: 'YOUR_SECURE_ADMIN_PASSWORD', // À remplacer!
+       password: 'bD!qOuS$V8iPbVHVZv5C', // À remplacer!
        role: 'admin', 
        createdAt: new Date().toISOString() 
      },
      { 
        id: 2, 
        username: 'developer', 
-       password: 'YOUR_SECURE_DEV_PASSWORD', // À remplacer!
+       password: 'lo&FybhYaLQ59hLtGB!F', // À remplacer!
        role: 'developer', 
        createdAt: new Date().toISOString() 
      }
