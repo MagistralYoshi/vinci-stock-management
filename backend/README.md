@@ -61,7 +61,7 @@ DB_USER=stock_user
 DB_PASSWORD=your_password
 
 # Sécurité
-JWT_SECRET=your_secret_key_change_this
+JWT_SECRET=
 
 # Serveur
 NODE_ENV=development
