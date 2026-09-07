@@ -75,7 +75,11 @@ app.use((req, res) => {
 });
 
 // Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`✅ Serveur démarré sur http://localhost:${PORT}`);
+// En production (Railway), écouter sur 0.0.0.0
+// En développement (localhost), utiliser localhost
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+app.listen(PORT, HOST, () => {
+  console.log(`✅ Serveur démarré sur ${HOST}:${PORT}`);
   console.log(`📚 API docs: http://localhost:${PORT}/api`);
 });
