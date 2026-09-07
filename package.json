@@ -1,0 +1,15 @@
+{
+  "name": "vinci-stock-management",
+  "version": "1.0.0",
+  "description": "Stock Management App - React + Node.js + PostgreSQL",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "start": "node backend/src/index.js",
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build"
+  },
+  "keywords": ["stock", "management", "react", "node"],
+  "author": "MagistralYoshi",
+  "license": "MIT"
+}

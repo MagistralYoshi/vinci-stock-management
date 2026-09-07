@@ -1,0 +1,15 @@
+[build]
+builder = "nixpacks"
+
+[build.nixpacks]
+packages = ["nodejs"]
+
+[[services]]
+name = "backend"
+startCommand = "cd backend && npm install && npm start"
+port = 3000
+
+[[services]]
+name = "frontend"
+startCommand = "cd frontend && npm install && npm run build && npm run preview"
+port = 3000
