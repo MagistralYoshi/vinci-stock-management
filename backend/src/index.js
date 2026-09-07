@@ -25,7 +25,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Test de connexion à la base de données
+// Simple ping endpoint - no database dependency
+app.get('/api/ping', (req, res) => {
+  res.json({ 
+    status: 'pong',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Health check - tests database connection
 app.get('/api/health', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -53,9 +61,10 @@ app.get('/api', (req, res) => {
     message: 'Stock Management API',
     version: '1.0.0',
     endpoints: {
+      ping: '/api/ping',
+      health: '/api/health',
       items: '/api/items',
-      history: '/api/history',
-      health: '/api/health'
+      history: '/api/history'
     }
   });
 });
