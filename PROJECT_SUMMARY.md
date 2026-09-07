@@ -31,7 +31,7 @@ Une **application web complète** pour gérer votre stock de matériel avec :
 ## 📁 Structure du Projet
 
 ```
-Vinci Chantier Moderne/
+stock-management/
 │
 ├── 📄 README.md                    ← Vue d'ensemble du projet
 ├── 📄 QUICKSTART.md               ← Guide 5 min pour démarrer

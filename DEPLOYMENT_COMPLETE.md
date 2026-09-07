@@ -126,16 +126,20 @@ Vous devriez voir la page de login ✅
 
 ## 📱 **Accès Utilisateurs**
 
+⚠️ **Les mots de passe par défaut doivent être changés!**
+
+Voir: `DEVELOPER_CREDENTIALS.example.md` pour les instructions
+
 ### **Admin (Full Access)**
 ```
 Username: admin
-Password: admin
+Password: [À configurer - voir DEVELOPER_CREDENTIALS.example.md]
 ```
 
 ### **Developer (Panel Access)**
 ```
 Username: developer
-Password: DevPanel@2026#Secure
+Password: [À configurer - voir DEVELOPER_CREDENTIALS.example.md]
 ```
 
 ---

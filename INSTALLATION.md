@@ -148,7 +148,7 @@ Si le port 5000 ou 5173 est déjà utilisé :
 ## 📦 Structure du Projet
 
 ```
-Vinci Chantier Moderne/
+stock-management/
 ├── backend/
 │   ├── src/
 │   │   ├── index.js          # Serveur principal

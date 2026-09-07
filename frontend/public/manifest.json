@@ -1,5 +1,5 @@
 {
-  "name": "Gestionnaire de Stock - Vinci Chantier Moderne",
+  "name": "Stock Management Application",
   "short_name": "Gestionnaire de Stock",
   "description": "Application de gestion de stock en temps réel avec statistiques et alertes",
   "start_url": "/",

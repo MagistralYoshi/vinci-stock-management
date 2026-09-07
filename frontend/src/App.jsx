@@ -43,12 +43,14 @@ function App() {
   })
 
   // Créer les utilisateurs par défaut s'il n'existe pas
+  // ⚠️ IMPORTANT: Changez les mots de passe en production!
+  // Voir: DEVELOPER_CREDENTIALS.example.md
   useEffect(() => {
     const users = JSON.parse(localStorage.getItem('app_users') || '[]')
     if (users.length === 0) {
       const defaultUsers = [
-        { id: 1, username: 'admin', password: 'admin', role: 'admin', createdAt: new Date().toISOString() },
-        { id: 2, username: 'developer', password: 'DevPanel@2026#Secure', role: 'developer', createdAt: new Date().toISOString() }
+        { id: 1, username: 'admin', password: 'changeme', role: 'admin', createdAt: new Date().toISOString() },
+        { id: 2, username: 'developer', password: 'changeme', role: 'developer', createdAt: new Date().toISOString() }
       ]
       localStorage.setItem('app_users', JSON.stringify(defaultUsers))
     }
@@ -282,7 +284,7 @@ function App() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2026 Vinci Chantier Moderne. Tous droits réservés.</p>
+          <p>&copy; 2026 Stock Management. Tous droits réservés.</p>
           <div className="footer-bottom-links">
             <a href="#privacy">Politique de confidentialité</a>
             <a href="#terms">Conditions d'utilisation</a>
