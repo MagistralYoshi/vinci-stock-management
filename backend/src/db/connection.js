@@ -5,23 +5,28 @@ dotenv.config();
 
 const { Pool } = pg;
 
-// Support pour Railway (DATABASE_URL) et développement local (DB_HOST/DB_PORT/etc)
+// Create pool based on environment
 const pool = process.env.DATABASE_URL
   ? new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false } // Railway requiert SSL
+      ssl: { rejectUnauthorized: false } // Railway requires SSL
     })
   : new Pool({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      database: process.env.DB_NAME || 'stock_management',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || '',
     });
 
+// Log connection attempts but don't crash
 pool.on('error', (err) => {
-  console.error('Erreur de connexion non attendue', err);
-  process.exit(-1);
+  console.error('⚠️ Pool error:', err.message);
+  // Don't exit - allow server to run without DB initially
+});
+
+pool.on('connect', () => {
+  console.log('✅ Database connection established');
 });
 
 export default pool;
