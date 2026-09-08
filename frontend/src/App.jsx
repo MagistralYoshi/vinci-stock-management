@@ -8,7 +8,7 @@ import DashboardPage from './pages/DashboardPage'
 import LoginPage from './pages/LoginPage'
 import DeveloperPanel from './pages/DeveloperPanel'
 
-const API_URL = 'http://localhost:5000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 // Service API
 const api = {
