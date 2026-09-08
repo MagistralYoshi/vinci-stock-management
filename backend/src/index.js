@@ -54,7 +54,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // ENDPOINT TEMPORAIRE - Réinitialiser les utilisateurs (pour tester les nouveaux mots de passe)
-app.post('/api/reset-users', async (req, res) => {
+app.get('/api/reset-users', async (req, res) => {
   try {
     // Delete existing users (this will cascade delete history entries)
     await pool.query('DELETE FROM history');
