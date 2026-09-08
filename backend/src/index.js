@@ -164,29 +164,54 @@ const initializeDatabase = async () => {
       await pool.query('CREATE INDEX IF NOT EXISTS idx_history_item_id ON history(item_id)');
       await pool.query('CREATE INDEX IF NOT EXISTS idx_history_timestamp ON history(timestamp)');
 
-      // Insert default admin users if users table is empty
-      const usersCount = await pool.query('SELECT COUNT(*) FROM users');
-      if (usersCount.rows[0].count === '0') {
-        console.log('📝 Création des utilisateurs par défaut...');
-        
-        // Hash passwords
-        const adminHash = await bcryptjs.hash('kP7#mQ9$xL2%vN5&rT8!s', 10);
-        const devHash = await bcryptjs.hash('bF4@jH6!wK3$nP9%zM1&v', 10);
-        
-        // Insert default users
-        await pool.query(
-          'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4), ($5, $6, $7, $8)',
-          [
-            'admin', 'admin@localhost', adminHash, 'admin',
-            'developer', 'developer@localhost', devHash, 'developer'
-          ]
-        );
-        console.log('✅ Utilisateurs par défaut créés');
-      }
-
       console.log('✅ Tables créées avec succès');
     } else {
-      console.log('✅ Tables trouvées - aucune initialisation nécessaire');
+      // Tables exist - check if password_hash column exists and add it if needed
+      console.log('✅ Tables trouvées - vérification du schéma...');
+      
+      const columnExists = await pool.query(`
+        SELECT EXISTS (
+          SELECT 1 FROM information_schema.columns 
+          WHERE table_name = 'users' AND column_name = 'password_hash'
+        )
+      `);
+      
+      if (!columnExists.rows[0].exists) {
+        console.log('📝 Ajout de la colonne password_hash à la table users...');
+        await pool.query(`ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)`);
+      }
+      
+      const roleColumnExists = await pool.query(`
+        SELECT EXISTS (
+          SELECT 1 FROM information_schema.columns 
+          WHERE table_name = 'users' AND column_name = 'role'
+        )
+      `);
+      
+      if (!roleColumnExists.rows[0].exists) {
+        console.log('📝 Ajout de la colonne role à la table users...');
+        await pool.query(`ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'user'`);
+      }
+    }
+    
+    // Create default users if users table is empty
+    const usersCount = await pool.query('SELECT COUNT(*) FROM users');
+    if (usersCount.rows[0].count === '0') {
+      console.log('📝 Création des utilisateurs par défaut...');
+      
+      // Hash passwords
+      const adminHash = await bcryptjs.hash('kP7#mQ9$xL2%vN5&rT8!s', 10);
+      const devHash = await bcryptjs.hash('bF4@jH6!wK3$nP9%zM1&v', 10);
+      
+      // Insert default users
+      await pool.query(
+        'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4), ($5, $6, $7, $8)',
+        [
+          'admin', 'admin@localhost', adminHash, 'admin',
+          'developer', 'developer@localhost', devHash, 'developer'
+        ]
+      );
+      console.log('✅ Utilisateurs par défaut créés');
     }
   } catch (error) {
     console.error('⚠️ Erreur lors de l\'initialisation des tables:', error.message);
