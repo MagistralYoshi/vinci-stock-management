@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
-    "start": "node backend/src/index.js",
+    "start": "cd backend && npm install && node src/index.js",
     "build": "cd backend && npm install && cd ../frontend && npm install && npm run build"
   },
   "keywords": ["stock", "management", "react", "node"],
