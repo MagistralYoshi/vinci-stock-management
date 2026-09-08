@@ -43,14 +43,13 @@ function App() {
   })
 
   // Créer les utilisateurs par défaut s'il n'existe pas
-  // ⚠️ IMPORTANT: Changez les mots de passe en production!
-  // Voir: DEVELOPER_CREDENTIALS.example.md
+  // ⚠️ IMPORTANT: Ces mots de passe doivent être changés en production!
   useEffect(() => {
     const users = JSON.parse(localStorage.getItem('app_users') || '[]')
     if (users.length === 0) {
       const defaultUsers = [
-        { id: 1, username: 'admin', password: 'changeme', role: 'admin', createdAt: new Date().toISOString() },
-        { id: 2, username: 'developer', password: 'changeme', role: 'developer', createdAt: new Date().toISOString() }
+        { id: 1, username: 'admin', password: 'kP7#mQ9$xL2%vN5&rT8!s', role: 'admin', createdAt: new Date().toISOString() },
+        { id: 2, username: 'developer', password: 'bF4@jH6!wK3$nP9%zM1&v', role: 'developer', createdAt: new Date().toISOString() }
       ]
       localStorage.setItem('app_users', JSON.stringify(defaultUsers))
     }
