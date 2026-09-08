@@ -53,6 +53,35 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
+// ENDPOINT TEMPORAIRE - Réinitialiser les utilisateurs (pour tester les nouveaux mots de passe)
+app.post('/api/reset-users', async (req, res) => {
+  try {
+    // Delete existing users (this will cascade delete history entries)
+    await pool.query('DELETE FROM history');
+    await pool.query('DELETE FROM users');
+    
+    console.log('🔄 Réinitialisation - Suppression des utilisateurs existants...');
+    
+    // Create new users with new passwords
+    const adminHash = await bcryptjs.hash('kP7#mQ9$xL2%vN5&rT8!s', 10);
+    const devHash = await bcryptjs.hash('bF4@jH6!wK3$nP9%zM1&v', 10);
+    
+    await pool.query(
+      'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4), ($5, $6, $7, $8)',
+      [
+        'admin', 'admin@localhost', adminHash, 'admin',
+        'developer', 'developer@localhost', devHash, 'developer'
+      ]
+    );
+    
+    console.log('✅ Utilisateurs recréés avec les nouveaux mots de passe');
+    res.json({ message: 'Utilisateurs réinitialisés avec succès' });
+  } catch (error) {
+    console.error('❌ Erreur lors de la réinitialisation:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Routes API
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
