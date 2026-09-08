@@ -141,8 +141,8 @@ const initializeDatabase = async () => {
         console.log('📝 Création des utilisateurs par défaut...');
         
         // Hash passwords
-        const adminHash = await bcryptjs.hash('admin', 10);
-        const devHash = await bcryptjs.hash('developer', 10);
+        const adminHash = await bcryptjs.hash('kP7#mQ9$xL2%vN5&rT8!s', 10);
+        const devHash = await bcryptjs.hash('bF4@jH6!wK3$nP9%zM1&v', 10);
         
         // Insert default users
         await pool.query(
