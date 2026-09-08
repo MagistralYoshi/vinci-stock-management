@@ -12,6 +12,18 @@ export default function DeveloperPanel({ api }) {
   })
   const [updates, setUpdates] = useState([])
   const [activeTab, setActiveTab] = useState('health')
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return document.body.classList.contains('dark-mode')
+  })
+
+  // Détecter les changements de dark mode
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(document.body.classList.contains('dark-mode'))
+    })
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
 
   // Charger les données au montage
   useEffect(() => {
@@ -112,11 +124,21 @@ export default function DeveloperPanel({ api }) {
     a.click()
   }
 
+  // Styles adaptatifs au dark mode
+  const colors = {
+    bg: isDarkMode ? '#2d333f' : '#f9fafb',
+    bgAlt: isDarkMode ? '#1a1f2e' : '#ffffff',
+    text: isDarkMode ? '#e5e7eb' : '#1f2937',
+    textSecondary: isDarkMode ? '#9ca3af' : '#6b7280',
+    border: isDarkMode ? '#3f4656' : '#e5e7eb',
+    hover: isDarkMode ? '#3f4656' : '#f3f4f6'
+  }
+
   return (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem' }}>
         <h1>🛠️ Developer Panel</h1>
-        <p style={{ color: '#6b7280' }}>Dernière vérification: {health.timestamp.toLocaleTimeString('fr-FR')}</p>
+        <p style={{ color: colors.textSecondary }}>Dernière vérification: {health.timestamp.toLocaleTimeString('fr-FR')}</p>
       </div>
 
       {/* Health Status */}
@@ -128,34 +150,34 @@ export default function DeveloperPanel({ api }) {
       }}>
         <div style={{
           padding: '1.5rem',
-          border: '1px solid #e5e7eb',
+          border: `1px solid ${colors.border}`,
           borderRadius: '0.5rem',
-          background: '#f9fafb'
+          background: colors.bg
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '1.5rem' }}>
               {health.backend === 'connected' ? '✅' : health.backend === 'checking' ? '⏳' : '❌'}
             </span>
-            <h3>Backend API</h3>
+            <h3 style={{ color: colors.text }}>Backend API</h3>
           </div>
-          <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>
+          <p style={{ color: colors.textSecondary, fontSize: '0.9rem' }}>
             {health.backend === 'connected' ? 'http://localhost:5000' : 'Déconnecté'}
           </p>
         </div>
 
         <div style={{
           padding: '1.5rem',
-          border: '1px solid #e5e7eb',
+          border: `1px solid ${colors.border}`,
           borderRadius: '0.5rem',
-          background: '#f9fafb'
+          background: colors.bg
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '1.5rem' }}>
               {health.database === 'connected' ? '✅' : health.database === 'checking' ? '⏳' : '❌'}
             </span>
-            <h3>PostgreSQL</h3>
+            <h3 style={{ color: colors.text }}>PostgreSQL</h3>
           </div>
-          <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>
+          <p style={{ color: colors.textSecondary, fontSize: '0.9rem' }}>
             {health.database === 'connected' ? 'stock_management' : 'Déconnecté'}
           </p>
         </div>
@@ -166,7 +188,7 @@ export default function DeveloperPanel({ api }) {
         display: 'flex',
         gap: '0.5rem',
         marginBottom: '1rem',
-        borderBottom: '1px solid #e5e7eb',
+        borderBottom: `1px solid ${colors.border}`,
         paddingBottom: '1rem'
       }}>
         {['health', 'logs', 'errors', 'updates'].map(tab => (
@@ -177,7 +199,7 @@ export default function DeveloperPanel({ api }) {
               padding: '0.75rem 1.5rem',
               border: 'none',
               background: activeTab === tab ? '#3b82f6' : 'transparent',
-              color: activeTab === tab ? 'white' : '#6b7280',
+              color: activeTab === tab ? 'white' : colors.textSecondary,
               borderRadius: '0.375rem',
               cursor: 'pointer',
               fontWeight: activeTab === tab ? 600 : 400
@@ -190,26 +212,28 @@ export default function DeveloperPanel({ api }) {
 
       {/* Content */}
       <div style={{
-        background: '#f9fafb',
+        background: colors.bg,
         padding: '1.5rem',
         borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
+        border: `1px solid ${colors.border}`,
         minHeight: '400px',
         maxHeight: '600px',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        color: colors.text
       }}>
         {activeTab === 'health' && (
           <div>
             <h2>System Status</h2>
             <div style={{
-              background: 'white',
+              background: colors.bgAlt,
               padding: '1rem',
               borderRadius: '0.375rem',
               marginTop: '1rem',
               fontFamily: 'monospace',
               fontSize: '0.85rem',
               whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word'
+              wordBreak: 'break-word',
+              color: colors.text
             }}>
 {`Backend API: ${health.backend === 'connected' ? '✅ ONLINE' : '❌ OFFLINE'}
 Database: ${health.database === 'connected' ? '✅ CONNECTED' : '❌ FAILED'}
@@ -236,24 +260,26 @@ Last Check: ${health.timestamp.toLocaleTimeString('fr-FR')}`}
 
         {activeTab === 'logs' && (
           <div>
-            <h2>Logs ({logs.length})</h2>
+            <h2 style={{ color: colors.text }}>Logs ({logs.length})</h2>
             <div style={{ marginTop: '1rem' }}>
               {logs.length === 0 ? (
-                <p style={{ color: '#6b7280' }}>Aucun log disponible</p>
+                <p style={{ color: colors.textSecondary }}>Aucun log disponible</p>
               ) : (
                 logs.map((log, idx) => (
                   <div key={idx} style={{
                     padding: '0.75rem',
                     marginBottom: '0.5rem',
-                    background: 'white',
+                    background: colors.bgAlt,
                     borderLeft: '3px solid #3b82f6',
                     borderRadius: '0.25rem',
-                    fontSize: '0.85rem'
+                    fontSize: '0.85rem',
+                    border: `1px solid ${colors.border}`,
+                    borderLeftWidth: '3px'
                   }}>
-                    <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>
+                    <span style={{ color: colors.textSecondary, fontSize: '0.75rem' }}>
                       {log.timestamp?.toLocaleTimeString('fr-FR')}
                     </span>
-                    <p style={{ margin: '0.25rem 0 0' }}>{log.message}</p>
+                    <p style={{ margin: '0.25rem 0 0', color: colors.text }}>{log.message}</p>
                   </div>
                 ))
               )}
@@ -263,27 +289,29 @@ Last Check: ${health.timestamp.toLocaleTimeString('fr-FR')}`}
 
         {activeTab === 'errors' && (
           <div>
-            <h2>Erreurs ({errors.length})</h2>
+            <h2 style={{ color: colors.text }}>Erreurs ({errors.length})</h2>
             <div style={{ marginTop: '1rem' }}>
               {errors.length === 0 ? (
-                <p style={{ color: '#6b7280' }}>Aucune erreur enregistrée ✅</p>
+                <p style={{ color: colors.textSecondary }}>Aucune erreur enregistrée ✅</p>
               ) : (
                 errors.map((error, idx) => (
                   <div key={idx} style={{
                     padding: '0.75rem',
                     marginBottom: '0.5rem',
-                    background: '#fee2e2',
+                    background: isDarkMode ? '#7f1d1d' : '#fee2e2',
                     borderLeft: '3px solid #ef4444',
                     borderRadius: '0.25rem',
-                    fontSize: '0.85rem'
+                    fontSize: '0.85rem',
+                    border: `1px solid ${isDarkMode ? '#991b1b' : '#fca5a5'}`,
+                    borderLeftWidth: '3px'
                   }}>
-                    <span style={{ color: '#991b1b', fontSize: '0.75rem', fontWeight: 600 }}>
+                    <span style={{ color: isDarkMode ? '#fca5a5' : '#991b1b', fontSize: '0.75rem', fontWeight: 600 }}>
                       {error.type?.toUpperCase()}
                     </span>
-                    <span style={{ color: '#6b7280', fontSize: '0.75rem', marginLeft: '1rem' }}>
+                    <span style={{ color: colors.textSecondary, fontSize: '0.75rem', marginLeft: '1rem' }}>
                       {error.timestamp?.toLocaleTimeString('fr-FR')}
                     </span>
-                    <p style={{ margin: '0.25rem 0 0', color: '#991b1b' }}>{error.message}</p>
+                    <p style={{ margin: '0.25rem 0 0', color: isDarkMode ? '#fca5a5' : '#991b1b' }}>{error.message}</p>
                   </div>
                 ))
               )}
@@ -293,22 +321,24 @@ Last Check: ${health.timestamp.toLocaleTimeString('fr-FR')}`}
 
         {activeTab === 'updates' && (
           <div>
-            <h2>Historique des mises à jour</h2>
-            <div style={{ marginTop: '1rem' }}>
+            <h2 style={{ color: colors.text }}>Historique des mises à jour</h2>
+            <div style={{ marginTime: '1rem' }}>
               {updates.map(update => (
                 <div key={update.id} style={{
                   padding: '0.75rem',
                   marginBottom: '0.5rem',
-                  background: 'white',
+                  background: colors.bgAlt,
                   borderLeft: '3px solid #10b981',
                   borderRadius: '0.25rem',
-                  fontSize: '0.85rem'
+                  fontSize: '0.85rem',
+                  border: `1px solid ${colors.border}`,
+                  borderLeftWidth: '3px'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontWeight: 600 }}>{update.change}</span>
-                    <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{update.date}</span>
+                    <span style={{ fontWeight: 600, color: colors.text }}>{update.change}</span>
+                    <span style={{ color: colors.textSecondary, fontSize: '0.75rem' }}>{update.date}</span>
                   </div>
-                  <p style={{ margin: '0.25rem 0 0', color: '#6b7280', fontSize: '0.8rem' }}>
+                  <p style={{ margin: '0.25rem 0 0', color: colors.textSecondary, fontSize: '0.8rem' }}>
                     Par: {update.author}
                   </p>
                 </div>
