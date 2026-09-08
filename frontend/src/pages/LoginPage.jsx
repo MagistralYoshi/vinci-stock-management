@@ -1,70 +1,75 @@
 import { useState } from 'react'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 export default function LoginPage({ onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
     if (!username.trim() || !password.trim()) {
       setError('Veuillez remplir tous les champs')
+      setIsLoading(false)
       return
     }
 
-    if (password.length < 4) {
-      setError('Le mot de passe doit contenir au moins 4 caractères')
-      return
-    }
+    try {
+      // Appeler l'endpoint /api/auth/login
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
 
-    // Simuler une authentification simple avec localStorage
-    const users = JSON.parse(localStorage.getItem('app_users') || '[]')
-    const user = users.find(u => u.username === username && u.password === password)
+      const data = await response.json()
 
-    if (user) {
-      localStorage.setItem('app_currentUser', JSON.stringify(user))
-      onLogin(user)
-    } else {
-      setError('Identifiants incorrects')
+      if (!response.ok) {
+        setError(data.error || 'Identifiants incorrects')
+        setIsLoading(false)
+        return
+      }
+
+      // Sauvegarder le token et l'utilisateur
+      localStorage.setItem('auth_token', data.token)
+      localStorage.setItem('app_currentUser', JSON.stringify(data.user))
+
+      // Appeler onLogin avec les infos de l'utilisateur
+      onLogin(data.user)
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Erreur de connexion. Vérifiez que le serveur est actif.')
+      setIsLoading(false)
     }
   }
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
     if (!username.trim() || !password.trim()) {
       setError('Veuillez remplir tous les champs')
+      setIsLoading(false)
       return
     }
 
     if (password.length < 4) {
       setError('Le mot de passe doit contenir au moins 4 caractères')
+      setIsLoading(false)
       return
     }
 
-    const users = JSON.parse(localStorage.getItem('app_users') || '[]')
-    
-    if (users.find(u => u.username === username)) {
-      setError('Cet utilisateur existe déjà')
-      return
-    }
-
-    const newUser = {
-      id: Date.now(),
-      username,
-      password,
-      createdAt: new Date().toISOString(),
-      role: 'user'
-    }
-
-    users.push(newUser)
-    localStorage.setItem('app_users', JSON.stringify(users))
-    localStorage.setItem('app_currentUser', JSON.stringify(newUser))
-    onLogin(newUser)
+    // Pour l'enregistrement, on simule (ou on crée un endpoint /api/auth/register)
+    // Pour l'instant, on affiche un message
+    setError('L\'enregistrement n\'est pas disponible. Veuillez utiliser admin/admin ou developer/developer')
+    setIsLoading(false)
   }
 
   return (
@@ -175,23 +180,24 @@ export default function LoginPage({ onLogin }) {
 
           <button
             type="submit"
+            disabled={isLoading}
             style={{
-              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              background: isLoading ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6, #2563eb)',
               color: 'white',
               padding: '0.875rem',
               border: 'none',
               borderRadius: '0.5rem',
               fontSize: '1rem',
               fontWeight: 700,
-              cursor: 'pointer',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
               transition: 'all 0.3s',
               textTransform: 'uppercase',
               letterSpacing: '0.5px'
             }}
-            onMouseEnter={(e) => e.target.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)'}
+            onMouseEnter={(e) => !isLoading && (e.target.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)')}
             onMouseLeave={(e) => e.target.style.boxShadow = 'none'}
           >
-            {isRegistering ? '✓ Créer un compte' : '🔓 Se connecter'}
+            {isLoading ? '⏳ Connexion en cours...' : (isRegistering ? '✓ Créer un compte' : '🔓 Se connecter')}
           </button>
         </form>
 

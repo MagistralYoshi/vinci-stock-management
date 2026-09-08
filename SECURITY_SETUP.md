@@ -53,8 +53,8 @@ const defaultUsers = [
 ### Remplacer par vos propres mots de passe:
 ```javascript
 const defaultUsers = [
-  { id: 1, username: 'admin', password: 'YOUR_SECURE_ADMIN_PASSWORD_HERE', role: 'admin', createdAt: new Date().toISOString() },
-  { id: 2, username: 'developer', password: 'YOUR_SECURE_DEV_PASSWORD_HERE', role: 'developer', createdAt: new Date().toISOString() }
+  { id: 1, username: 'admin', password: 'bD!qOuS$V8iPbVHVZv5C', role: 'admin', createdAt: new Date().toISOString() },
+  { id: 2, username: 'developer', password: 'lo&FybhYaLQ59hLtGB!F', role: 'developer', createdAt: new Date().toISOString() }
 ]
 ```
 

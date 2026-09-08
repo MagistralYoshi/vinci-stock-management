@@ -10,6 +10,14 @@ import DeveloperPanel from './pages/DeveloperPanel'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
+// Configurer axios avec le JWT token
+const setupAxios = () => {
+  const token = localStorage.getItem('auth_token')
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  }
+}
+
 // Service API
 const api = {
   items: {
@@ -25,6 +33,9 @@ const api = {
     recordAction: (data) => axios.post(`${API_URL}/history/action`, data)
   }
 }
+
+// Setup axios au démarrage
+setupAxios()
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
@@ -42,18 +53,8 @@ function App() {
     return saved ? JSON.parse(saved) : null
   })
 
-  // Créer les utilisateurs par défaut s'il n'existe pas
-  // ⚠️ IMPORTANT: Ces mots de passe doivent être changés en production!
-  useEffect(() => {
-    const users = JSON.parse(localStorage.getItem('app_users') || '[]')
-    if (users.length === 0) {
-      const defaultUsers = [
-        { id: 1, username: 'admin', password: 'admin', role: 'admin', createdAt: new Date().toISOString() },
-        { id: 2, username: 'developer', password: 'developer', role: 'developer', createdAt: new Date().toISOString() }
-      ]
-      localStorage.setItem('app_users', JSON.stringify(defaultUsers))
-    }
-  }, [])
+  // Plus besoin d'initialiser les users par défaut en localStorage
+  // Ils sont gérés par le backend avec JWT
 
   // Appliquer le mode sombre
   useEffect(() => {
@@ -103,13 +104,23 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('app_currentUser')
+    localStorage.removeItem('auth_token')
+    // Supprimer le header d'autorisation d'axios
+    delete axios.defaults.headers.common['Authorization']
     setCurrentUser(null)
     setCurrentPage('dashboard')
   }
 
+  // Fonction de login qui configure axios avec le token
+  const handleLogin = (user) => {
+    setCurrentUser(user)
+    // Re-setup axios avec le nouveau token
+    setupAxios()
+  }
+
   // Si pas d'utilisateur connecté, afficher la page de login
   if (!currentUser) {
-    return <LoginPage onLogin={setCurrentUser} />
+    return <LoginPage onLogin={handleLogin} />
   }
 
   return (

@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import bcryptjs from 'bcryptjs';
 import itemRoutes from './routes/items.js';
 import historyRoutes from './routes/history.js';
+import authRoutes from './routes/auth.js';
 import pool from './db/connection.js';
 
 dotenv.config();
@@ -52,6 +54,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Routes API
+app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/history', historyRoutes);
 
@@ -92,8 +95,9 @@ const initializeDatabase = async () => {
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
           username VARCHAR(100) UNIQUE NOT NULL,
-          email VARCHAR(100) UNIQUE NOT NULL,
-          password VARCHAR(255) NOT NULL,
+          email VARCHAR(100) UNIQUE,
+          password_hash VARCHAR(255) NOT NULL,
+          role VARCHAR(50) DEFAULT 'user',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);
@@ -131,13 +135,24 @@ const initializeDatabase = async () => {
       await pool.query('CREATE INDEX IF NOT EXISTS idx_history_item_id ON history(item_id)');
       await pool.query('CREATE INDEX IF NOT EXISTS idx_history_timestamp ON history(timestamp)');
 
-      // Insert default admin user if users table is empty
+      // Insert default admin users if users table is empty
       const usersCount = await pool.query('SELECT COUNT(*) FROM users');
       if (usersCount.rows[0].count === '0') {
+        console.log('📝 Création des utilisateurs par défaut...');
+        
+        // Hash passwords
+        const adminHash = await bcryptjs.hash('admin', 10);
+        const devHash = await bcryptjs.hash('developer', 10);
+        
+        // Insert default users
         await pool.query(
-          'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)',
-          ['admin', 'admin@localhost', 'hashed_password']
+          'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4), ($5, $6, $7, $8)',
+          [
+            'admin', 'admin@localhost', adminHash, 'admin',
+            'developer', 'developer@localhost', devHash, 'developer'
+          ]
         );
+        console.log('✅ Utilisateurs par défaut créés');
       }
 
       console.log('✅ Tables créées avec succès');
