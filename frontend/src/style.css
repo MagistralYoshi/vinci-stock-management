@@ -620,6 +620,33 @@ body.dark-mode thead {
   background: linear-gradient(135deg, #1e40af, #2563eb);
 }
 
+/* Dark mode inputs & form elements */
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+  background: #2d333f;
+  color: #e5e7eb;
+  border-color: #3f4656;
+}
+
+body.dark-mode .form-group input::placeholder,
+body.dark-mode .form-group textarea::placeholder {
+  color: #9ca3af;
+}
+
+body.dark-mode .form-group input:hover,
+body.dark-mode .form-group select:hover,
+body.dark-mode .form-group textarea:hover {
+  border-color: #6b7280;
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: var(--primary-accent);
+}
+
 /* ============= BADGES ============= */
 .badge {
   display: inline-block;
