@@ -96,4 +96,22 @@ const server = app.listen(PORT, HOST, () => {
 // Catch non-handled errors
 server.on('error', (err) => {
   console.error('❌ Erreur serveur:', err);
+  process.exit(1);
+});
+
+// Catch uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('💥 UNCAUGHT EXCEPTION:', err);
+  process.exit(1);
+});
+
+// Catch unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('⚠️ UNHANDLED REJECTION:', reason);
+  process.exit(1);
+});
+
+// Log process exit
+process.on('exit', (code) => {
+  console.log(`🛑 Processus terminé avec le code: ${code}`);
 });
