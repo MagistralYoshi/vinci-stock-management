@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 export default function DeveloperPanel({ api }) {
   const [logs, setLogs] = useState([])
   const [errors, setErrors] = useState([])
@@ -25,8 +27,8 @@ export default function DeveloperPanel({ api }) {
 
   const checkHealth = async () => {
     try {
-      const backendRes = await fetch('http://localhost:5000/api/health')
-      const dbRes = await fetch('http://localhost:5000/api/health')
+      const backendRes = await fetch(`${API_URL}/health`)
+      const dbRes = await fetch(`${API_URL}/health`)
       
       setHealth({
         backend: backendRes.ok ? 'connected' : 'error',
