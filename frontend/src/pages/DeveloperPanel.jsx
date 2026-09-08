@@ -3,6 +3,17 @@ import { useState, useEffect } from 'react'
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 export default function DeveloperPanel({ api }) {
+  // Restriction d'accès: seul developer peut accéder
+  const currentUser = JSON.parse(localStorage.getItem('app_currentUser') || 'null')
+  if (!currentUser || currentUser.role !== 'developer') {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444' }}>
+        <h2>❌ Accès refusé</h2>
+        <p>Seul les utilisateurs avec le rôle "developer" peuvent accéder au Developer Panel.</p>
+      </div>
+    )
+  }
+
   const [logs, setLogs] = useState([])
   const [errors, setErrors] = useState([])
   const [health, setHealth] = useState({

@@ -148,7 +148,7 @@ function App() {
             >
               📜 Historique
             </button>
-            {(currentUser?.role === 'developer' || currentUser?.role === 'admin') && (
+            {currentUser?.role === 'developer' && (
               <button
                 className={`nav-link ${currentPage === 'developer' ? 'active' : ''}`}
                 onClick={() => setCurrentPage('developer')}
