@@ -79,7 +79,21 @@ app.use((req, res) => {
 // En développement (localhost), utiliser localhost
 const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
-app.listen(PORT, HOST, () => {
+// Debug: afficher les variables d'environnement au démarrage
+console.log('🔧 DEBUG - Variables d\'environnement au démarrage:');
+console.log(`  NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`  PORT: ${process.env.PORT}`);
+console.log(`  CORS_ORIGIN: ${process.env.CORS_ORIGIN}`);
+console.log(`  DATABASE_URL: ${process.env.DATABASE_URL ? 'défini' : 'non défini'}`);
+console.log(`  Résultat final - HOST: ${HOST}, PORT: ${PORT}`);
+
+const server = app.listen(PORT, HOST, () => {
   console.log(`✅ Serveur démarré sur ${HOST}:${PORT}`);
   console.log(`📚 API docs: http://localhost:${PORT}/api`);
+  console.log(`⚠️ NOTE: Cet affichage "localhost" n'est que pour les logs. En production c'est accessible via ${process.env.CORS_ORIGIN || 'l\'URL de Railway'}`);
+});
+
+// Catch non-handled errors
+server.on('error', (err) => {
+  console.error('❌ Erreur serveur:', err);
 });
