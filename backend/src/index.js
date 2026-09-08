@@ -91,6 +91,17 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`✅ Serveur démarré sur ${HOST}:${PORT}`);
   console.log(`📚 API docs: http://localhost:${PORT}/api`);
   console.log(`⚠️ NOTE: Cet affichage "localhost" n'est que pour les logs. En production c'est accessible via ${process.env.CORS_ORIGIN || 'l\'URL de Railway'}`);
+  
+  // Test du serveur 100ms après le démarrage
+  setTimeout(() => {
+    console.log('🧪 Testing server health...');
+    try {
+      const testResponse = { status: 'pong', timestamp: new Date().toISOString() };
+      console.log('✅ Server health test passed:', JSON.stringify(testResponse));
+    } catch (err) {
+      console.error('❌ Server health test failed:', err);
+    }
+  }, 100);
 });
 
 // Catch non-handled errors
